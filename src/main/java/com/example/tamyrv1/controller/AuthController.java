@@ -1,7 +1,7 @@
 package com.example.tamyrv1.controller;
+
 import com.example.tamyrv1.model.User;
 import com.example.tamyrv1.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,14 +9,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
-            String token = userService.registerUser(user);
-            return ResponseEntity.ok("Registration successful. Token: " + token);
+            userService.registerUser(user);
+            return ResponseEntity.ok("Registration successful.");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -32,4 +35,3 @@ public class AuthController {
         }
     }
 }
-

@@ -1,4 +1,5 @@
 package com.example.tamyrv1.service;
+
 import com.example.tamyrv1.model.User;
 import com.example.tamyrv1.repository.UserRepository;
 import com.example.tamyrv1.util.JwtUtil;
@@ -25,7 +26,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
-        return jwtUtil.generateToken(user.getEmail());
+        return "User registered successfully";
     }
 
     public String loginUser(String email, String password) {
@@ -35,6 +36,8 @@ public class UserService {
             throw new RuntimeException("Invalid email or password");
         }
 
-        return jwtUtil.generateToken(email);
+        // Генерируем токен с использованием userId
+        return jwtUtil.generateToken(email, user.getId());
     }
 }
+
