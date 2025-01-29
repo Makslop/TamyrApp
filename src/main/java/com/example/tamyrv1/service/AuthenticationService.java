@@ -63,9 +63,8 @@ public class AuthenticationService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
-
-        user.setFirstName("ivan"); // <-- Возможно, этот вызов отсутствует
-        user.setLastName("ivan");
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
 
         user = userRepository.save(user);
      }
