@@ -2,7 +2,9 @@ package com.example.tamyrv1.repository;
 
 
 import com.example.tamyrv1.model.AccessToken;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -14,6 +16,11 @@ public interface AccessTokenRepository extends JpaRepository<AccessToken, Long> 
 
     void deleteByToken(String token);
 
-    @Query("SELECT a FROM AccessToken a WHERE a.user.id = :userId AND a.revoked = false")
+    @Query("SELECT a FROM AccessToken a WHERE a.user.id = :userId AND a.loggedOut = false")
     List<AccessToken> findValidTokensByUserId(@Param("userId") Long userId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE AccessToken a SET a.loggedOut = true WHERE a.user.id = :userId")
+    void revokeAllTokens(@Param("userId") long userId);
 }
