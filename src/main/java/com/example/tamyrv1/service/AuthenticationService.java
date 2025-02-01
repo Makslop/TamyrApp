@@ -20,41 +20,37 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 @Service
 public class AuthenticationService {
 
     private final UserRepository userRepository;
-
     private final JwtService jwtService;
-
     private final PasswordEncoder passwordEncoder;
-
     private final AuthenticationManager authenticationManager;
-
     private final AccessTokenRepository accessTokenRepository;
-
     private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisTokenService redisTokenService; // Добавили Redis
 
-
-    public AuthenticationService(UserRepository userRepository,
-                                 JwtService jwtService,
-                                 PasswordEncoder passwordEncoder,
-                                 AuthenticationManager authenticationManager,
-                                 RefreshTokenRepository refreshTokenRepository,
-                                 AccessTokenRepository accessTokenRepository) {
+    public AuthenticationService(
+            UserRepository userRepository,
+            JwtService jwtService,
+            PasswordEncoder passwordEncoder,
+            AuthenticationManager authenticationManager,
+            RefreshTokenRepository refreshTokenRepository,
+            AccessTokenRepository accessTokenRepository,
+            RedisTokenService redisTokenService) { // Добавили Redis в конструктор
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.refreshTokenRepository = refreshTokenRepository;
         this.accessTokenRepository = accessTokenRepository;
+        this.redisTokenService = redisTokenService;
     }
 
     public void register(RegistrationRequestDto request){
@@ -66,43 +62,41 @@ public class AuthenticationService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
 
-        user = userRepository.save(user);
-     }
+        userRepository.save(user);
+    }
 
-     private void revokeAllToken(User user){
-         accessTokenRepository.revokeAllTokens(user.getId());
-         refreshTokenRepository.revokeAllTokens(user.getId());
-     }
+    private void revokeAllToken(User user){
+        accessTokenRepository.revokeAllTokens(user.getId());
+        refreshTokenRepository.revokeAllTokens(user.getId());
+        redisTokenService.deleteAccessToken(user.getUsername()); // Удаляем из Redis
+    }
 
-     private void saveUserToken(String accessToken, String refreshToken, User user){
-         RefreshToken rToken = new RefreshToken();
-         AccessToken aToken = new AccessToken();
-         rToken.setToken(refreshToken);
-         rToken.setUser(user);
-         rToken.setRevoked(false);
-         //rToken.setExpiryDate(LocalDateTime.from(Instant.now().plus(30, ChronoUnit.DAYS))); // Добавить дату истечения
-         rToken.setExpiryDate(Instant.now().plus(30, ChronoUnit.DAYS)
-                 .atZone(ZoneId.systemDefault())
-                 .toLocalDateTime()); // Исправлено
-         aToken.setToken(accessToken);
-         aToken.setUser(user);
-         aToken.setLoggedOut(false);
-         //aToken.setExpiryDate(LocalDateTime.from(Instant.now().plus(30, ChronoUnit.DAYS))); // Добавить дату истечения
-         aToken.setExpiryDate(Instant.now().plus(30, ChronoUnit.DAYS)
-                 .atZone(ZoneId.systemDefault())
-                 .toLocalDateTime()); // Исправлено
+    private void saveUserToken(String accessToken, String refreshToken, User user){
+        RefreshToken rToken = new RefreshToken();
+        AccessToken aToken = new AccessToken();
 
-         refreshTokenRepository.save(rToken);
-         accessTokenRepository.save(aToken);
-     }
+        rToken.setToken(refreshToken);
+        rToken.setUser(user);
+        rToken.setRevoked(false);
+        rToken.setExpiryDate(Instant.now().plus(30, ChronoUnit.DAYS).atZone(ZoneId.systemDefault()).toLocalDateTime());
 
-     public AuthenticationResponseDto authenticate(LoginRequestDto requestDto){
+        aToken.setToken(accessToken);
+        aToken.setUser(user);
+        aToken.setLoggedOut(false);
+        aToken.setExpiryDate(Instant.now().plus(30, ChronoUnit.DAYS).atZone(ZoneId.systemDefault()).toLocalDateTime());
+
+        refreshTokenRepository.save(rToken);
+        accessTokenRepository.save(aToken);
+        redisTokenService.saveAccessToken(user.getUsername(), accessToken); // Добавляем в Redis
+    }
+
+    public AuthenticationResponseDto authenticate(LoginRequestDto requestDto){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         requestDto.getUsername(),
                         requestDto.getPassword()
-                        )
-                );
+                )
+        );
         User user = userRepository.findByEmail(requestDto.getUsername()).orElseThrow();
 
         String accessToken = jwtService.generateAccessToken(user);
@@ -112,37 +106,31 @@ public class AuthenticationService {
 
         saveUserToken(accessToken, refreshToken, user);
 
-        return  new AuthenticationResponseDto(accessToken,refreshToken);
-
+        return new AuthenticationResponseDto(accessToken, refreshToken);
     }
 
-    public ResponseEntity<AuthenticationResponseDto> refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ){
+    public ResponseEntity<AuthenticationResponseDto> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         String token = authorizationHeader.substring(7);
-
         String username = jwtService.extractUsername(token);
 
         User user = userRepository.findByEmail(username)
-                .orElseThrow(()-> new UsernameNotFoundException("No user found"));
+                .orElseThrow(() -> new UsernameNotFoundException("No user found"));
 
-        if(jwtService.isValidRefresh(token,user)){
+        if (jwtService.isValidRefresh(token, user)) {
             String accessToken = jwtService.generateAccessToken(user);
             String refreshToken = jwtService.generateRefreshToken(user);
 
             revokeAllToken(user);
-
             saveUserToken(accessToken, refreshToken, user);
-            return  new ResponseEntity<>(new AuthenticationResponseDto(accessToken,refreshToken), HttpStatus.OK);
+
+            return new ResponseEntity<>(new AuthenticationResponseDto(accessToken, refreshToken), HttpStatus.OK);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
-
 }
