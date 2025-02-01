@@ -47,6 +47,8 @@ public class User implements UserDetails {
         this.password = password;
     }
 
+
+
     public Long getId() {
         return id;
     }
@@ -139,5 +141,9 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void setUsername(String username) {
+        this.email = username;
     }
 }

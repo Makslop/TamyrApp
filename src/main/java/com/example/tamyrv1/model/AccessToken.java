@@ -17,6 +17,9 @@ public class AccessToken implements Token {
     @Column(name = "expiry_date", nullable = false)
     private LocalDateTime expiryDate;
 
+    @Column(name = "is_logged_out")
+    private boolean loggedOut;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -55,5 +58,13 @@ public class AccessToken implements Token {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public boolean isLoggedOut(){
+        return loggedOut;
+    }
+
+    public void setLoggedOut(boolean loggedOut){
+        this.loggedOut = loggedOut;
     }
 }
