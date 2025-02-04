@@ -6,5 +6,4 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UserService extends UserDetailsService{
     boolean existsByEmail(String email);
-
 }
