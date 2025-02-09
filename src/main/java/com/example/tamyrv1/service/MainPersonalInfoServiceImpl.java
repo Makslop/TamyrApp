@@ -1,85 +1,10 @@
-/*package com.example.tamyrv1.service;
-
-import com.example.tamyrv1.dto.MainPersonalInfoDto;
-import com.example.tamyrv1.model.MainPersonalInfo;
-import com.example.tamyrv1.model.User;
-import com.example.tamyrv1.repository.MainPersonalInfoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-@Service
-public class MainPersonalInfoServiceImpl implements MainPersonalInfoService {
-
-    private final MainPersonalInfoRepository repository;
-    private final UserServiceImpl userService;
-
-    @Autowired
-    public MainPersonalInfoServiceImpl(MainPersonalInfoRepository repository, UserServiceImpl userService) {
-        this.repository = repository;
-        this.userService = userService;
-    }
-
-    @Override
-    public List<MainPersonalInfoDto> getAll() {
-        return repository.findAll().stream().map(this::toDto).collect(Collectors.toList());
-    }
-
-    @Override
-    public MainPersonalInfoDto getById(int id) {
-        return repository.findById(id).map(this::toDto).orElse(null);
-    }
-
-    @Override
-    public MainPersonalInfoDto save(MainPersonalInfoDto infoDto) {
-        // Проверяем, существует ли пользователь с таким userId
-        User user = userService.getUserById(infoDto.getUserId());
-
-        // Преобразуем DTO в сущность
-        MainPersonalInfo entity = toEntity(infoDto);
-        entity.setUser(user); // Устанавливаем пользователя
-
-        // Сохраняем в БД
-        MainPersonalInfo savedEntity = repository.save(entity);
-        return toDto(savedEntity);
-    }
-
-    @Override
-    public void delete(int id) {
-        repository.deleteById(id);
-    }
-
-    // Маппинг DTO в Entity
-    private MainPersonalInfoDto toDto(MainPersonalInfo entity) {
-        return new MainPersonalInfoDto(
-                entity.getId(),
-                entity.getUser().getId(), // Теперь берем userId из User
-                entity.getAge(),
-                entity.getSex(),
-                entity.getWeight(),
-                entity.getHeight()
-        );
-    }
-
-    private MainPersonalInfo toEntity(MainPersonalInfoDto dto) {
-        MainPersonalInfo entity = new MainPersonalInfo();
-        entity.setId(dto.getId());
-        entity.setAge(dto.getAge());
-        entity.setSex(dto.getSex());
-        entity.setWeight(dto.getWeight());
-        entity.setHeight(dto.getHeight());
-        return entity;
-    }
-}
-*/
 package com.example.tamyrv1.service;
 
 import com.example.tamyrv1.dto.MainPersonalInfoDto;
 import com.example.tamyrv1.model.MainPersonalInfo;
 import com.example.tamyrv1.model.User;
 import com.example.tamyrv1.repository.MainPersonalInfoRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -100,6 +25,7 @@ public class MainPersonalInfoServiceImpl implements MainPersonalInfoService {
     }
 
     @Override
+    @Transactional
     public MainPersonalInfoDto save(MainPersonalInfoDto infoDto) {
         // Проверяем, существует ли пользователь с таким userId
         User user = userService.getUserById(infoDto.getUserId());
@@ -146,11 +72,13 @@ public class MainPersonalInfoServiceImpl implements MainPersonalInfoService {
     }
 
     @Override
+    @Transactional
     public void delete(int id) {
         repository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public void deleteByUserId(Long userId) {
         User user = userService.getUserById(userId);
         repository.deleteByUser(user);

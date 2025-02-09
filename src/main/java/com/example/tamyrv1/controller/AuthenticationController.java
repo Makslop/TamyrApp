@@ -7,6 +7,7 @@ import com.example.tamyrv1.service.AuthenticationService;
 import com.example.tamyrv1.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +27,7 @@ public class AuthenticationController {
 
     @PostMapping("/registration")
     public ResponseEntity<String> register(
-            @RequestBody RegistrationRequestDto registrationRequestDto
+            @RequestBody @Valid RegistrationRequestDto registrationRequestDto
             ){
 
         if(!userService.existsByEmail(registrationRequestDto.getUsername())){
@@ -38,7 +39,7 @@ public class AuthenticationController {
     }
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponseDto> authenticate(
-            @RequestBody LoginRequestDto request){
+            @RequestBody @Valid LoginRequestDto request){
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
