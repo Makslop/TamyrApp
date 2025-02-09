@@ -24,7 +24,6 @@ public class RefreshToken implements Token {
     @Column(name = "revoked", nullable = false)
     private boolean revoked;
 
-    // Геттеры и сеттеры
     @Override
     public String getToken() {
         return token;

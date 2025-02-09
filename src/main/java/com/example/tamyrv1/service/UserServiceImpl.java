@@ -22,4 +22,8 @@ public class UserServiceImpl implements UserService{
         if(user==null)return false;
         return true;
     }
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User with ID " + userId + " does not exist."));
+    }
 }
