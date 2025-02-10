@@ -12,6 +12,7 @@ import com.example.tamyrv1.repository.RefreshTokenRepository;
 import com.example.tamyrv1.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
+@Transactional
 public class AuthenticationService {
 
     private final UserRepository userRepository;
@@ -56,7 +58,6 @@ public class AuthenticationService {
         this.refreshTokenRepository = refreshTokenRepository;
         this.accessTokenRepository = accessTokenRepository;
     }
-
     public void register(RegistrationRequestDto request){
         User user = new User();
         user.setUsername(request.getUsername());

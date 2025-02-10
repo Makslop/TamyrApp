@@ -7,6 +7,7 @@ import com.google.common.base.Function;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.transaction.Transactional;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ import java.security.Key;
 import javax.crypto.SecretKey;
 
 @Service
+@Transactional
 public class JwtService {
     @Value("${security.jwt.secret_key}")
     private String secretKey;

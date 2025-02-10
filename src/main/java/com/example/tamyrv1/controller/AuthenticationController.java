@@ -30,7 +30,7 @@ public class AuthenticationController {
             @RequestBody @Valid RegistrationRequestDto registrationRequestDto
             ){
 
-        if(!userService.existsByEmail(registrationRequestDto.getUsername())){
+        if(userService.existsByEmail(registrationRequestDto.getUsername())){
             return ResponseEntity.badRequest().body("Error 1");
         }
 
