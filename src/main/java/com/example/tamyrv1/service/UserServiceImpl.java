@@ -7,7 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -28,8 +30,17 @@ public class UserServiceImpl implements UserService{
 
         return user.map(u -> true).orElse(false);
     }
+    @Override
+    public List<Long> getAllUserIds() {
+        return userRepository.findAll().stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+    }
     public User getUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User with ID " + userId + " does not exist."));
+    }
+    public boolean existsById(Long userId) {
+        return userRepository.existsById(userId);
     }
 }
