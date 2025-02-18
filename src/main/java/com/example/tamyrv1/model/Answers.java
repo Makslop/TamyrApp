@@ -2,6 +2,9 @@ package com.example.tamyrv1.model;
 
 import jakarta.persistence.*;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+
 @Entity
 @Table(name = "answers")
 public class Answers {
@@ -17,14 +20,14 @@ public class Answers {
     private Long userId;
 
     @Column(name = "date", nullable = false)
-    private Long date;
+    private Timestamp date;
 
     @Column(name = "answer", columnDefinition = "TEXT", nullable = false)
     private String answer; // JSON Format
 
     public Answers() {}
 
-    public Answers(Long answerId, Long surveyId, Long userId, Long date, String answer) {
+    public Answers(Long answerId, Long surveyId, Long userId, Timestamp date, String answer) {
         this.answerId = answerId;
         this.surveyId = surveyId;
         this.userId = userId;
@@ -56,11 +59,11 @@ public class Answers {
         this.userId = userId;
     }
 
-    public Long getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(Long date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 
