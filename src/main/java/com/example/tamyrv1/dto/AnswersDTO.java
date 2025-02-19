@@ -1,19 +1,29 @@
 package com.example.tamyrv1.dto;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+
 public class AnswersDTO {
     private Long answerId;
     private Long surveyId;
     private Long userId;
-    private Long date;
+    private Timestamp date;
+
     private String answer;
 
     public AnswersDTO() {}
 
-    public AnswersDTO(Long answerId, Long surveyId, Long userId, Long date, String answer) {
+    public AnswersDTO(Long answerId, Long surveyId, Long userId, String answer) {
         this.answerId = answerId;
         this.surveyId = surveyId;
         this.userId = userId;
+        this.answer = answer;
+    }
+    public AnswersDTO(Long answerId, Long surveyId, Long userId,Timestamp date, String answer) {
+        this.answerId = answerId;
+        this.surveyId = surveyId;
         this.date = date;
+        this.userId = userId;
         this.answer = answer;
     }
 
@@ -41,11 +51,11 @@ public class AnswersDTO {
         this.userId = userId;
     }
 
-    public Long getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(Long date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 
