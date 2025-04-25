@@ -1,4 +1,4 @@
-package com.example.tamyrv1.dto;
+/*package com.example.tamyrv1.dto;
 
 import lombok.Getter;
 
@@ -15,4 +15,30 @@ public class AuthenticationResponseDto {
         this.refreshToken = refreshToken;
     }
 
+}
+*/
+package com.example.tamyrv1.dto;
+
+public class AuthenticationResponseDto {
+    private final String accessToken;
+    private final String refreshToken;
+    private final Long userId; // ✅ Добавлено поле userId
+
+    public AuthenticationResponseDto(String accessToken, String refreshToken, Long userId) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.userId = userId;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
 }

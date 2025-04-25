@@ -96,7 +96,7 @@ public class AuthenticationService {
          refreshTokenRepository.save(rToken);
          accessTokenRepository.save(aToken);
      }
-
+     /*
      public AuthenticationResponseDto authenticate(LoginRequestDto requestDto){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -116,6 +116,26 @@ public class AuthenticationService {
         return  new AuthenticationResponseDto(accessToken,refreshToken);
 
     }
+    */
+     public AuthenticationResponseDto authenticate(LoginRequestDto requestDto){
+         authenticationManager.authenticate(
+                 new UsernamePasswordAuthenticationToken(
+                         requestDto.getUsername(),
+                         requestDto.getPassword()
+                 )
+         );
+
+         User user = userRepository.findByEmail(requestDto.getUsername()).orElseThrow();
+
+         String accessToken = jwtService.generateAccessToken(user);
+         String refreshToken = jwtService.generateRefreshToken(user);
+
+         revokeAllToken(user);
+         saveUserToken(accessToken, refreshToken, user);
+
+         // ✅ Возвращаем userId
+         return new AuthenticationResponseDto(accessToken, refreshToken, user.getId());
+     }
 
     public ResponseEntity<AuthenticationResponseDto> refreshToken(
             HttpServletRequest request,
@@ -141,7 +161,11 @@ public class AuthenticationService {
             revokeAllToken(user);
 
             saveUserToken(accessToken, refreshToken, user);
+            /*
             return  new ResponseEntity<>(new AuthenticationResponseDto(accessToken,refreshToken), HttpStatus.OK);
+             */
+            return new ResponseEntity<>(new AuthenticationResponseDto(accessToken, refreshToken, user.getId()), HttpStatus.OK);
+
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
