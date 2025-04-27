@@ -24,13 +24,14 @@ public class MiBandDataController {
     @PostMapping("/data")
     public ResponseEntity<String> receiveMiBandData(@RequestBody MiBandDataDTO miBandDataDTO) {
         try {
-            User user = userServiceImpl.getUserById(miBandDataDTO.getUserId()); // Теперь без Optional
-            miBandDataService.saveMiBandData(user, miBandDataDTO);
+            User user = userServiceImpl.getUserById(miBandDataDTO.getUserId());
+            miBandDataService.saveMiBandData(user, miBandDataDTO); // Без sleepHours
             return ResponseEntity.ok("Mi Band data received successfully.");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
     @GetMapping("/data/{userId}")
     public ResponseEntity<List<MiBandDataDTO>> getUserMiBandData(@PathVariable Long userId) {
