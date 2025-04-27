@@ -96,27 +96,6 @@ public class AuthenticationService {
          refreshTokenRepository.save(rToken);
          accessTokenRepository.save(aToken);
      }
-     /*
-     public AuthenticationResponseDto authenticate(LoginRequestDto requestDto){
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        requestDto.getUsername(),
-                        requestDto.getPassword()
-                        )
-                );
-        User user = userRepository.findByEmail(requestDto.getUsername()).orElseThrow();
-
-        String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
-
-        revokeAllToken(user);
-
-        saveUserToken(accessToken, refreshToken, user);
-
-        return  new AuthenticationResponseDto(accessToken,refreshToken);
-
-    }
-    */
      public AuthenticationResponseDto authenticate(LoginRequestDto requestDto){
          authenticationManager.authenticate(
                  new UsernamePasswordAuthenticationToken(
