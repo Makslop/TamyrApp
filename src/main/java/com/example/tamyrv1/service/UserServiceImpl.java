@@ -1,3 +1,4 @@
+
 package com.example.tamyrv1.service;
 
 import com.example.tamyrv1.model.User;
@@ -24,7 +25,6 @@ public class UserServiceImpl implements UserService{
     public boolean existsByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
 
-        // Логирование перед возвратом
         System.out.println("Ищем email: " + email);
         System.out.println("Результат запроса findByEmail: " + user);
 

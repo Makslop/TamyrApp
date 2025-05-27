@@ -9,7 +9,7 @@ public class MainPersonalInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mpi_id")
-    private int id;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
@@ -38,7 +38,7 @@ public class MainPersonalInfo {
         this.height = height;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -60,10 +60,6 @@ public class MainPersonalInfo {
 
     public int getHeight() {
         return height;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setUser(User user) {

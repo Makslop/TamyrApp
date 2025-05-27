@@ -26,7 +26,7 @@ public class LifestyleInfoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LifestyleInfoDto> getLifestyleInfoById(@PathVariable @Positive(message = "ID must be a positive number") Integer id) {
+    public ResponseEntity<LifestyleInfoDto> getLifestyleInfoById(@PathVariable @Positive(message = "ID must be a positive number") Long id) {
         LifestyleInfoDto lifestyleInfo = lifestyleInfoService.getLifestyleInfoById(id);
         return ResponseEntity.ok(lifestyleInfo);
     }
@@ -38,7 +38,7 @@ public class LifestyleInfoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteLifestyleInfo(@PathVariable @Positive(message = "ID must be a positive number") Integer id) {
+    public ResponseEntity<String> deleteLifestyleInfo(@PathVariable @Positive(message = "ID must be a positive number") Long id) {
         lifestyleInfoService.deleteLifestyleInfo(id);
         return ResponseEntity.ok("Lifestyle info with ID " + id + " has been deleted successfully.");
     }

@@ -27,41 +27,28 @@ public class MainPersonalInfoServiceImpl implements MainPersonalInfoService {
     @Override
     @Transactional
     public MainPersonalInfoDto save(MainPersonalInfoDto infoDto) {
-        // Проверяем, существует ли пользователь с таким userId
         User user = userService.getUserById(infoDto.getUserId());
 
-        // Проверяем, есть ли уже запись MainPersonalInfo для данного пользователя
         Optional<MainPersonalInfo> existingInfo = repository.findByUser(user);
 
         MainPersonalInfo personalInfo;
         if (existingInfo.isPresent()) {
-            // Если запись уже существует, обновляем её
             personalInfo = existingInfo.get();
             updateMainPersonalInfoFromDto(personalInfo, infoDto);
         } else {
-            // Если записи нет, создаем новую
             personalInfo = new MainPersonalInfo(user, infoDto.getAge(), infoDto.getSex(),
                     infoDto.getWeight(), infoDto.getHeight());
         }
 
-        // Сохраняем в БД
         MainPersonalInfo savedEntity = repository.save(personalInfo);
         return toDto(savedEntity);
     }
 
     @Override
-    public MainPersonalInfoDto getById(int id) {
+    public MainPersonalInfoDto getById(Long id) {
         return repository.findById(id)
                 .map(this::toDto)
                 .orElseThrow(() -> new RuntimeException("Main personal info not found for ID: " + id));
-    }
-
-    @Override
-    public MainPersonalInfoDto getByUserId(Long userId) {
-        User user = userService.getUserById(userId);
-        MainPersonalInfo personalInfo = repository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Main personal info not found for user ID: " + userId));
-        return toDto(personalInfo);
     }
 
     @Override
@@ -73,18 +60,10 @@ public class MainPersonalInfoServiceImpl implements MainPersonalInfoService {
 
     @Override
     @Transactional
-    public void delete(int id) {
+    public void delete(Long id) {
         repository.deleteById(id);
     }
 
-    @Override
-    @Transactional
-    public void deleteByUserId(Long userId) {
-        User user = userService.getUserById(userId);
-        repository.deleteByUser(user);
-    }
-
-    // Маппинг Entity -> DTO
     private MainPersonalInfoDto toDto(MainPersonalInfo entity) {
         return new MainPersonalInfoDto(
                 entity.getId(),
@@ -96,7 +75,6 @@ public class MainPersonalInfoServiceImpl implements MainPersonalInfoService {
         );
     }
 
-    // Метод для обновления существующей записи из DTO
     private void updateMainPersonalInfoFromDto(MainPersonalInfo entity, MainPersonalInfoDto dto) {
         entity.setAge(dto.getAge());
         entity.setSex(dto.getSex());

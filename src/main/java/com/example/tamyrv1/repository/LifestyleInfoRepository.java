@@ -6,11 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface LifestyleInfoRepository extends JpaRepository<LifestyleInfo, Integer> {
+public interface LifestyleInfoRepository extends JpaRepository<LifestyleInfo, Long> {
 
-    // Находит LifestyleInfo по User
     Optional<LifestyleInfo> findByUser(User user);
 
-    // Удаляет LifestyleInfo по User
     void deleteByUser(User user);
+
 }

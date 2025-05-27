@@ -39,13 +39,13 @@ public class JwtService {
 
 
     private String generateToken(User user, Long expiration) {
-        // Генерация токена с использованием параметров пользователя и времени истечения
+
         return Jwts.builder()
-                .setSubject(user.getUsername()) // Устанавливаем subject как имя пользователя
-                .setIssuedAt(new Date(System.currentTimeMillis())) // Устанавливаем дату выпуска токена
-                .setExpiration(new Date(System.currentTimeMillis() + expiration)) // Устанавливаем время истечения токена
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // Указываем ключ подписи и алгоритм
-                .compact(); // Сериализуем JWT в строку
+                .setSubject(user.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     public String generateAccessToken(User user){

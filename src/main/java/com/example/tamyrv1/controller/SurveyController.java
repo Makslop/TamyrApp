@@ -4,7 +4,6 @@ import com.example.tamyrv1.dto.SurveyDTO;
 import com.example.tamyrv1.dto.AnswersDTO;
 import com.example.tamyrv1.service.SurveyService;
 import com.example.tamyrv1.service.AnswersService;
-import com.example.tamyrv1.service.UserService;
 import com.example.tamyrv1.service.UserServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,3 +61,4 @@ public class SurveyController {
         return ResponseEntity.ok(answersService.getAnswersByUserId(userId));
     }
 }
+

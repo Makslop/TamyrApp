@@ -7,6 +7,7 @@ import com.example.tamyrv1.handler.CustomLogoutHandler;
 import com.example.tamyrv1.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -51,22 +52,22 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/login/**", "/registration/**", "/css/**", "/refresh_token/**", "/")
-                            .permitAll(); // Разреш аем все запросы к этим URL
-                    auth.requestMatchers("/admin/**").hasAuthority("ADMIN"); // Разрешаем запросы только для администратора
-                    auth.anyRequest().authenticated(); // Требуем аутентификацию для всех остальных запросов
+                    auth.requestMatchers("/login/**", "/registration/**", "/css/**", "/refresh_token/**", "/", "/api/surveys/**").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/api/surveys/create").permitAll();
+                    auth.requestMatchers("/admin.html").permitAll();
+                    auth.anyRequest().authenticated();
                 }).userDetailsService(userService)
                 .exceptionHandling(e -> {
-                    e.accessDeniedHandler(accessDeniedHandler); // Обработчик отказа доступа
-                    e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)); // Входная точка аутентификации
+                    e.accessDeniedHandler(accessDeniedHandler);
+                    e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
                 })
-                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS)) // Управление сессиями
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Добавление фильтра JWT перед фильтром UsernamePasswordAuthenticationFilter
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(log -> {
-                    log.logoutUrl("/logout"); // URL для выхода
-                    log.addLogoutHandler(customLogoutHandler); // Добавление пользовательского обработчика выхода
+                    log.logoutUrl("/logout");
+                    log.addLogoutHandler(customLogoutHandler);
                     log.logoutSuccessHandler((request, response, authentication) ->
-                            SecurityContextHolder.clearContext()); // Очистка контекста безопасности после успешного выхода
+                            SecurityContextHolder.clearContext());
                 });
 
         return http.build();

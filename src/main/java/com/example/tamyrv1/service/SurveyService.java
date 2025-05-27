@@ -9,4 +9,5 @@ public interface SurveyService {
     SurveyDTO getSurveyById(Long surveyId);
     List<SurveyDTO> getAllSurveys();
     void deleteSurvey(Long surveyId);
+    SurveyDTO updateSurvey(Long surveyId, SurveyDTO surveyDTO);
 }

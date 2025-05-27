@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 public class MainPersonalInfoDto {
 
-    private int id;
+    private Long id;
 
     @NotNull(message = "User ID cannot be null")
     private Long userId;

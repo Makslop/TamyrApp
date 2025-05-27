@@ -25,7 +25,7 @@ public class MiBandDataController {
     public ResponseEntity<String> receiveMiBandData(@RequestBody MiBandDataDTO miBandDataDTO) {
         try {
             User user = userServiceImpl.getUserById(miBandDataDTO.getUserId());
-            miBandDataService.saveMiBandData(user, miBandDataDTO); // Без sleepHours
+            miBandDataService.saveMiBandData(user, miBandDataDTO);
             return ResponseEntity.ok("Mi Band data received successfully.");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -36,7 +36,7 @@ public class MiBandDataController {
     @GetMapping("/data/{userId}")
     public ResponseEntity<List<MiBandDataDTO>> getUserMiBandData(@PathVariable Long userId) {
         try {
-            userServiceImpl.getUserById(userId); // Просто вызываем метод, если не найден - Exception
+            userServiceImpl.getUserById(userId);
             return ResponseEntity.ok(miBandDataService.getAllMiBandDataByUser(userId));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(null);

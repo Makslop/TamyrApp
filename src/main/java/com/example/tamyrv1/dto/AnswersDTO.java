@@ -1,6 +1,5 @@
 package com.example.tamyrv1.dto;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 public class AnswersDTO {

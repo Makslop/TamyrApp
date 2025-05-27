@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class LifestyleInfoDto {
 
-    private Integer lifestyleId;
+    private Long lifestyleId;
 
     @NotNull(message = "User ID cannot be null")
     private Long userId;

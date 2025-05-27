@@ -26,7 +26,7 @@ public class MainPersonalInfoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MainPersonalInfoDto> getPersonalInfoById(
-            @PathVariable @Positive(message = "ID must be a positive number") int id) {
+            @PathVariable @Positive(message = "ID must be a positive number") Long id) {
         return ResponseEntity.ok(personalInfoService.getById(id));
     }
 
@@ -37,7 +37,7 @@ public class MainPersonalInfoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePersonalInfo(
-            @PathVariable @Positive(message = "ID must be a positive number") int id) {
+            @PathVariable @Positive(message = "ID must be a positive number") Long id) {
         personalInfoService.delete(id);
         return ResponseEntity.ok("Personal info with ID " + id + " has been deleted.");
     }

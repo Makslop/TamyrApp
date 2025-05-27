@@ -21,12 +21,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 @Service
 @Transactional
@@ -64,8 +61,6 @@ public class AuthenticationService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
 
         user = userRepository.save(user);
      }
@@ -81,17 +76,15 @@ public class AuthenticationService {
          rToken.setToken(refreshToken);
          rToken.setUser(user);
          rToken.setRevoked(false);
-         //rToken.setExpiryDate(LocalDateTime.from(Instant.now().plus(30, ChronoUnit.DAYS))); // Добавить дату истечения
          rToken.setExpiryDate(Instant.now().plus(30, ChronoUnit.DAYS)
                  .atZone(ZoneId.systemDefault())
-                 .toLocalDateTime()); // Исправлено
+                 .toLocalDateTime());
          aToken.setToken(accessToken);
          aToken.setUser(user);
          aToken.setLoggedOut(false);
-         //aToken.setExpiryDate(LocalDateTime.from(Instant.now().plus(30, ChronoUnit.DAYS))); // Добавить дату истечения
          aToken.setExpiryDate(Instant.now().plus(30, ChronoUnit.DAYS)
                  .atZone(ZoneId.systemDefault())
-                 .toLocalDateTime()); // Исправлено
+                 .toLocalDateTime());
 
          refreshTokenRepository.save(rToken);
          accessTokenRepository.save(aToken);
@@ -112,7 +105,6 @@ public class AuthenticationService {
          revokeAllToken(user);
          saveUserToken(accessToken, refreshToken, user);
 
-         // ✅ Возвращаем userId
          return new AuthenticationResponseDto(accessToken, refreshToken, user.getId());
      }
 
@@ -140,9 +132,6 @@ public class AuthenticationService {
             revokeAllToken(user);
 
             saveUserToken(accessToken, refreshToken, user);
-            /*
-            return  new ResponseEntity<>(new AuthenticationResponseDto(accessToken,refreshToken), HttpStatus.OK);
-             */
             return new ResponseEntity<>(new AuthenticationResponseDto(accessToken, refreshToken, user.getId()), HttpStatus.OK);
 
         }

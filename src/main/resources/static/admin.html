@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel - Surveys</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            background-color: #432C81;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #432C81;
+        }
+        label, textarea, input {
+            display: block;
+            width: 100%;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        button {
+            background-color: #432C81;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .survey-list {
+            margin-top: 2rem;
+        }
+        .survey-item {
+            background-color: #f4f0fb;
+            border-left: 5px solid #432C81;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        pre {
+            background-color: #fff;
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Admin Panel — Manage Surveys</h1>
+</header>
+<div class="container">
+    <h2>Create Survey</h2>
+    <form id="survey-form">
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea>
+
+        <label for="variants">Questions & Answer Variants (JSON):</label>
+        <textarea id="variants" name="variants" required placeholder='{"q1": ["Yes", "No"], "q2": ["Option A", "Option B"]}'></textarea>
+
+        <button type="submit">Create Survey</button>
+    </form>
+
+    <div class="survey-list">
+        <h2>All Surveys</h2>
+        <div id="survey-output"></div>
+    </div>
+</div>
+
+<script>
+    async function fetchSurveys() {
+        const res = await fetch('/api/surveys/all');
+        const surveys = await res.json();
+        const container = document.getElementById('survey-output');
+        container.innerHTML = '';
+        surveys.forEach(s => {
+            const div = document.createElement('div');
+            div.classList.add('survey-item');
+            div.innerHTML = `
+                <strong>ID:</strong> ${s.surveyId}<br>
+                <strong>Description:</strong> ${s.surveyDescription}<br>
+                <strong>Questions & Answers:</strong>
+                <pre>${formatJson(s.questionsAnswersVariants)}</pre>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function formatJson(jsonString) {
+        try {
+            const obj = JSON.parse(jsonString);
+            return JSON.stringify(obj, null, 2); // красиво отформатированный JSON
+        } catch (e) {
+            return "Invalid JSON format";
+        }
+    }
+
+    document.getElementById('survey-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const data = {
+            surveyDescription: document.getElementById('description').value,
+            questionsAnswersVariants: document.getElementById('variants').value
+        };
+
+        const res = await fetch('/api/surveys/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+            alert('Survey created successfully');
+            document.getElementById('survey-form').reset();
+            fetchSurveys();
+        } else {
+            alert('Failed to create survey');
+        }
+    });
+
+    // Initial fetch
+    fetchSurveys();
+</script>
+</body>
+</html>
