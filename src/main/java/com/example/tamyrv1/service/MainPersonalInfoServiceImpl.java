@@ -168,6 +168,14 @@ public class MainPersonalInfoServiceImpl implements MainPersonalInfoService {
                 entity.getHeight()
         );
     }
+    @Override
+    public int getAgeByUserId(Long userId) {
+        User user = userService.getUserById(userId);
+        return repository.findByUser(user)
+                .map(MainPersonalInfo::getAge)
+                .orElseThrow(() -> new RuntimeException("Age not found for userId " + userId));
+    }
+
 
     private void updateMainPersonalInfoFromDto(MainPersonalInfo entity, MainPersonalInfoDto dto) {
         entity.setName(dto.getName());

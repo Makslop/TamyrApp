@@ -28,15 +28,69 @@
         h2 {
             color: #432C81;
         }
-        label, textarea, input {
+        label, textarea, input, select {
             display: block;
             width: 100%;
             margin-bottom: 1rem;
             font-size: 1rem;
         }
+        select {
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: white;
+        }
         textarea {
             height: 100px;
             resize: vertical;
+        }
+        .switch-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        .switch-wrapper label {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #432C81;
+        }
+        input:checked + .slider:before {
+            transform: translateX(22px);
         }
         button {
             background-color: #432C81;
@@ -45,9 +99,10 @@
             padding: 0.75rem 1.5rem;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 1rem;
         }
         .survey-list {
-            margin-top: 2rem;
+            margin-top: 2.5rem;
         }
         .survey-item {
             background-color: #f4f0fb;
@@ -77,8 +132,25 @@
         <label for="description">Description:</label>
         <textarea id="description" name="description" required></textarea>
 
+        <label for="surveyType">Survey Type:</label>
+        <select id="surveyType" name="surveyType" required>
+            <option value="">-- Select Type --</option>
+            <option value="general">General</option>
+            <option value="youth">Youth</option>
+            <option value="elderly">Elderly</option>
+            <option value="lifestyle">Lifestyle</option>
+        </select>
+
+        <div class="switch-wrapper">
+            <label for="isDaily">Is this a daily survey?</label>
+            <label class="switch">
+                <input type="checkbox" id="isDaily" name="isDaily">
+                <span class="slider"></span>
+            </label>
+        </div>
+
         <label for="variants">Questions & Answer Variants (JSON):</label>
-        <textarea id="variants" name="variants" required placeholder='{"q1": ["Yes", "No"], "q2": ["Option A", "Option B"]}'></textarea>
+        <textarea id="variants" name="variants" required placeholder='[{"question": "Do you smoke?", "options": ["Yes", "No"]}]'></textarea>
 
         <button type="submit">Create Survey</button>
     </form>
@@ -101,6 +173,8 @@
             div.innerHTML = `
                 <strong>ID:</strong> ${s.surveyId}<br>
                 <strong>Description:</strong> ${s.surveyDescription}<br>
+                <strong>Type:</strong> ${s.surveyType}<br>
+                <strong>Is Daily:</strong> ${s.isDaily ? 'Yes 🕒' : 'No'}<br>
                 <strong>Questions & Answers:</strong>
                 <pre>${formatJson(s.questionsAnswersVariants)}</pre>
             `;
@@ -111,7 +185,7 @@
     function formatJson(jsonString) {
         try {
             const obj = JSON.parse(jsonString);
-            return JSON.stringify(obj, null, 2); // красиво отформатированный JSON
+            return JSON.stringify(obj, null, 2);
         } catch (e) {
             return "Invalid JSON format";
         }
@@ -119,29 +193,50 @@
 
     document.getElementById('survey-form').addEventListener('submit', async e => {
         e.preventDefault();
+
+        const description = document.getElementById('description').value.trim();
+        const surveyType = document.getElementById('surveyType').value;
+        const isDaily = document.getElementById('isDaily').checked;
+        const rawVariants = document.getElementById('variants').value.trim();
+
+        if (!surveyType) {
+            alert("⚠ Please select a survey type.");
+            return;
+        }
+
+        let parsedVariants;
+        try {
+            parsedVariants = JSON.parse(rawVariants);
+        } catch (err) {
+            alert("⚠ Invalid JSON in 'Questions & Answers'. Please fix and try again.");
+            return;
+        }
+
         const data = {
-            surveyDescription: document.getElementById('description').value,
-            questionsAnswersVariants: document.getElementById('variants').value
+            surveyDescription: description,
+            isDaily: isDaily,
+            surveyType: surveyType,
+            questionsAnswersVariants: JSON.stringify(parsedVariants)
         };
+
+        console.log("🚀 Sending survey to backend:", data);
 
         const res = await fetch('/api/surveys/create', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
         if (res.ok) {
-            alert('Survey created successfully');
+            alert('✅ Survey created successfully');
             document.getElementById('survey-form').reset();
             fetchSurveys();
         } else {
-            alert('Failed to create survey');
+            const errText = await res.text();
+            alert('❌ Failed to create survey.\n' + errText);
         }
     });
 
-    // Initial fetch
     fetchSurveys();
 </script>
 </body>
