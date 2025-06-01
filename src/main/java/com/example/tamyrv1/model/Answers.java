@@ -2,12 +2,12 @@ package com.example.tamyrv1.model;
 
 import jakarta.persistence.*;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "answers")
 public class Answers {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "answer_id")
@@ -22,25 +22,14 @@ public class Answers {
     @Column(name = "date", nullable = false)
     private Timestamp date;
 
-    @Column(name = "answer", columnDefinition = "TEXT", nullable = false)
-    private String answer; // JSON Format
+    @Column(name = "answer", nullable = false, columnDefinition = "TEXT")
+    private String answer;
 
-    public Answers() {}
-
-    public Answers(Long answerId, Long surveyId, Long userId, Timestamp date, String answer) {
-        this.answerId = answerId;
-        this.surveyId = surveyId;
-        this.userId = userId;
-        this.date = date;
-        this.answer = answer;
+    public Answers() {
     }
 
     public Long getAnswerId() {
         return answerId;
-    }
-
-    public void setAnswerId(Long answerId) {
-        this.answerId = answerId;
     }
 
     public Long getSurveyId() {

@@ -7,16 +7,20 @@ import com.example.tamyrv1.service.AnswersService;
 import com.example.tamyrv1.service.UserServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/surveys")
 public class SurveyController {
+
     private final SurveyService surveyService;
     private final AnswersService answersService;
     private final UserServiceImpl userServiceImpl;
 
-    public SurveyController(SurveyService surveyService, AnswersService answersService, UserServiceImpl userServiceImpl) {
+    public SurveyController(SurveyService surveyService,
+                            AnswersService answersService,
+                            UserServiceImpl userServiceImpl) {
         this.surveyService = surveyService;
         this.answersService = answersService;
         this.userServiceImpl = userServiceImpl;
@@ -43,10 +47,17 @@ public class SurveyController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{surveyId}")
+    public ResponseEntity<SurveyDTO> updateSurvey(@PathVariable Long surveyId,
+                                                  @RequestBody SurveyDTO surveyDTO) {
+        return ResponseEntity.ok(surveyService.updateSurvey(surveyId, surveyDTO));
+    }
+
     @PostMapping("/submit")
     public ResponseEntity<?> submitAnswer(@RequestBody AnswersDTO answersDTO) {
         if (!userServiceImpl.existsById(answersDTO.getUserId())) {
-            return ResponseEntity.badRequest().body("User with ID " + answersDTO.getUserId() + " does not exist.");
+            return ResponseEntity.badRequest()
+                    .body("User with ID " + answersDTO.getUserId() + " does not exist.");
         }
         return ResponseEntity.ok(answersService.submitAnswer(answersDTO));
     }
@@ -60,5 +71,13 @@ public class SurveyController {
     public ResponseEntity<List<AnswersDTO>> getAnswersByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(answersService.getAnswersByUserId(userId));
     }
+
+    @GetMapping("/user/{userId}/survey/{surveyId}/answered")
+    public ResponseEntity<Boolean> hasUserAnsweredSurvey(@PathVariable Long userId,
+                                                         @PathVariable Long surveyId) {
+        boolean hasAnswered = answersService.hasUserAnsweredSurvey(userId, surveyId);
+        return ResponseEntity.ok(hasAnswered);
+    }
+
 }
 

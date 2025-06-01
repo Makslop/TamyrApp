@@ -41,4 +41,10 @@ public class MainPersonalInfoController {
         personalInfoService.delete(id);
         return ResponseEntity.ok("Personal info with ID " + id + " has been deleted.");
     }
+    @GetMapping("/age/{userId}")
+    public ResponseEntity<Integer> getUserAge(@PathVariable Long userId) {
+        int age = personalInfoService.getAgeByUserId(userId);
+        return ResponseEntity.ok(age);
+    }
+
 }

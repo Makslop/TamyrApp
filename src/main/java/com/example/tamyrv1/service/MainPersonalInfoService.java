@@ -7,4 +7,5 @@ public interface MainPersonalInfoService {
     MainPersonalInfoDto getById(Long id);
     List<MainPersonalInfoDto> getAll();
     void delete(Long id);
+    int getAgeByUserId(Long userId);
 }

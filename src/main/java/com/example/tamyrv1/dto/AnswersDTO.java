@@ -3,25 +3,26 @@ package com.example.tamyrv1.dto;
 import java.sql.Timestamp;
 
 public class AnswersDTO {
+
     private Long answerId;
     private Long surveyId;
     private Long userId;
     private Timestamp date;
-
     private String answer;
 
     public AnswersDTO() {}
 
-    public AnswersDTO(Long answerId, Long surveyId, Long userId, String answer) {
+    public AnswersDTO(Long answerId, Long surveyId, Long userId, Timestamp date, String answer) {
         this.answerId = answerId;
         this.surveyId = surveyId;
         this.userId = userId;
+        this.date = date;
         this.answer = answer;
     }
-    public AnswersDTO(Long answerId, Long surveyId, Long userId,Timestamp date, String answer) {
+
+    public AnswersDTO(Long answerId, Long surveyId, Long userId, String answer) {
         this.answerId = answerId;
         this.surveyId = surveyId;
-        this.date = date;
         this.userId = userId;
         this.answer = answer;
     }
