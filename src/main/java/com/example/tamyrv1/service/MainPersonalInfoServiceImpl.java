@@ -175,6 +175,12 @@ public class MainPersonalInfoServiceImpl implements MainPersonalInfoService {
                 .map(MainPersonalInfo::getAge)
                 .orElseThrow(() -> new RuntimeException("Age not found for userId " + userId));
     }
+    @Override
+    public boolean existsByUserId(Long userId) {
+        User user = userService.getUserById(userId);
+        return repository.findByUser(user).isPresent();
+    }
+
 
 
     private void updateMainPersonalInfoFromDto(MainPersonalInfo entity, MainPersonalInfoDto dto) {

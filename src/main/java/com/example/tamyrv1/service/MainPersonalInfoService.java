@@ -8,4 +8,5 @@ public interface MainPersonalInfoService {
     List<MainPersonalInfoDto> getAll();
     void delete(Long id);
     int getAgeByUserId(Long userId);
+    boolean existsByUserId(Long userId);
 }

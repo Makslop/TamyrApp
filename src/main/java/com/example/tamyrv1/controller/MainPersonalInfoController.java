@@ -46,5 +46,10 @@ public class MainPersonalInfoController {
         int age = personalInfoService.getAgeByUserId(userId);
         return ResponseEntity.ok(age);
     }
+    @GetMapping("/exists/{userId}")
+    public ResponseEntity<Boolean> existsPersonalInfo(@PathVariable Long userId) {
+        boolean exists = personalInfoService.existsByUserId(userId);
+        return ResponseEntity.ok(exists);
+    }
 
 }
