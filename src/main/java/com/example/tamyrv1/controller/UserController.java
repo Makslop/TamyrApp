@@ -18,10 +18,9 @@ public class UserController {
 
     @GetMapping("/api/user/me")
     public ResponseEntity<UserDto> getCurrentUser(Authentication authentication) {
-        String email = authentication.getName(); // email из токена
+        String email = authentication.getName();
         UserDto user = userService.findByEmail(email);
         if (user != null) {
-            // Возвращаем только email
             return ResponseEntity.ok(new UserDto(user.getEmail()));
         } else {
             return ResponseEntity.notFound().build();
