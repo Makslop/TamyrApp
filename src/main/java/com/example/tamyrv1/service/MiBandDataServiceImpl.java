@@ -5,6 +5,7 @@ import com.example.tamyrv1.model.MiBandData;
 import com.example.tamyrv1.model.User;
 import com.example.tamyrv1.repository.MiBandDataRepository;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,7 @@ public class MiBandDataServiceImpl implements MiBandDataService {
     public void saveMiBandData(User user, MiBandDataDTO miBandDataDTO) {
         MiBandData data = new MiBandData(
                 user,
-                miBandDataDTO.getHeartRate(),
+                miBandDataDTO.getHeartRateListJson(),
                 miBandDataDTO.getSteps(),
                 miBandDataDTO.getCaloriesBurned(),
                 miBandDataDTO.getDistance(),
@@ -36,7 +37,7 @@ public class MiBandDataServiceImpl implements MiBandDataService {
         return miBandDataRepository.findByUserId(userId).stream()
                 .map(data -> new MiBandDataDTO(
                         data.getUser().getId(),
-                        data.getHeartRate(),
+                        data.getHeartRateListJson(),
                         data.getSteps(),
                         data.getCaloriesBurned(),
                         data.getDistance(),

@@ -1,6 +1,7 @@
 package com.example.tamyrv1.model;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,18 +16,29 @@ public class MiBandData {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private int heartRate;
+    @Column(name = "heart_rate_list", columnDefinition = "TEXT", nullable = false)
+    private String heartRateListJson;  // JSON-массив в виде строки, например: "[72,75,70,68,74,...]"
+
+    @Column(name = "steps")
     private int steps;
+
+    @Column(name = "calories_burned")
     private int caloriesBurned;
+
+    @Column(name = "distance")
     private int distance;  // в метрах
+
+    @Column(name = "battery_level")
     private int batteryLevel;
+
+    @Column(name = "timestamp")
     private LocalDateTime timestamp;
 
     public MiBandData() {}
 
-    public MiBandData(User user, int heartRate, int steps, int caloriesBurned, int distance, int batteryLevel, LocalDateTime timestamp) {
+    public MiBandData(User user, String heartRateListJson, int steps, int caloriesBurned, int distance, int batteryLevel, LocalDateTime timestamp) {
         this.user = user;
-        this.heartRate = heartRate;
+        this.heartRateListJson = heartRateListJson;
         this.steps = steps;
         this.caloriesBurned = caloriesBurned;
         this.distance = distance;
@@ -52,12 +64,12 @@ public class MiBandData {
         this.user = user;
     }
 
-    public int getHeartRate() {
-        return heartRate;
+    public String getHeartRateListJson() {
+        return heartRateListJson;
     }
 
-    public void setHeartRate(int heartRate) {
-        this.heartRate = heartRate;
+    public void setHeartRateListJson(String heartRateListJson) {
+        this.heartRateListJson = heartRateListJson;
     }
 
     public int getSteps() {
@@ -100,3 +112,4 @@ public class MiBandData {
         this.timestamp = timestamp;
     }
 }
+
