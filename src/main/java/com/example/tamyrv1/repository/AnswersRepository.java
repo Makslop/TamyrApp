@@ -11,4 +11,6 @@ public interface AnswersRepository extends JpaRepository<Answers, Long> {
     List<Answers> findBySurveyId(Long surveyId);
     List<Answers> findByUserId(Long userId);
     boolean existsByUserIdAndSurveyId(Long userId, Long surveyId);
+    List<Answers> findTop7ByUserIdOrderByDateDesc(Long userId);
+
 }

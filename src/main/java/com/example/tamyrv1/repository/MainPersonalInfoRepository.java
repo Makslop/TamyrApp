@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface MainPersonalInfoRepository extends JpaRepository<MainPersonalInfo, Long> {
 
     Optional<MainPersonalInfo> findByUser(User user);
+    Optional<MainPersonalInfo> findByUserId(Long userId);
+
 }
