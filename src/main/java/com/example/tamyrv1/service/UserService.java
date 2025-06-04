@@ -11,6 +11,5 @@ public interface UserService extends UserDetailsService {
     boolean existsByEmail(String email);
     List<Long> getAllUserIds();
 
-    // Добавляем метод для получения UserDto по email
     UserDto findByEmail(String email);
 }

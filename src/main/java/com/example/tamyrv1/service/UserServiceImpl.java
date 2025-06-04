@@ -54,7 +54,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsById(userId);
     }
 
-    // Добавляем метод для получения UserDto по email
     @Override
     public UserDto findByEmail(String email) {
         Optional<User> userOpt = userRepository.findByEmail(email);

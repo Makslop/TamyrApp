@@ -5,7 +5,7 @@ public class SurveyDTO {
     private String surveyDescription;
     private String questionsAnswersVariants;
     private boolean isDaily;
-    private String surveyType; // "young", "elderly", etc.
+    private String surveyType;
 
     public SurveyDTO() {}
 

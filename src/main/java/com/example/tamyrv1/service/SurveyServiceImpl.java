@@ -57,7 +57,7 @@ public class SurveyServiceImpl implements SurveyService {
         survey.setSurveyDescription(surveyDTO.getSurveyDescription());
         survey.setQuestionsAnswersVariants(surveyDTO.getQuestionsAnswersVariants());
         survey.setDaily(surveyDTO.getIsDaily());
-        survey.setSurveyType(surveyDTO.getSurveyType()); // не забудь обновлять тип
+        survey.setSurveyType(surveyDTO.getSurveyType());
 
         survey = surveyRepository.save(survey);
         return convertToDTO(survey);
@@ -69,7 +69,7 @@ public class SurveyServiceImpl implements SurveyService {
                 survey.getSurveyDescription(),
                 survey.getQuestionsAnswersVariants(),
                 survey.isDaily(),
-                survey.getSurveyType() // мапим обратно в DTO
+                survey.getSurveyType()
         );
     }
 }

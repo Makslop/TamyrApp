@@ -5,6 +5,9 @@ import com.example.tamyrv1.model.MiBandData;
 import com.example.tamyrv1.model.User;
 import com.example.tamyrv1.repository.MiBandDataRepository;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,14 +22,16 @@ public class MiBandDataServiceImpl implements MiBandDataService {
 
     @Override
     public void saveMiBandData(User user, MiBandDataDTO miBandDataDTO) {
+        LocalDateTime parsedTimestamp = LocalDateTime.parse(miBandDataDTO.getTimestamp(), DateTimeFormatter.ISO_DATE_TIME);
+
         MiBandData data = new MiBandData(
                 user,
-                miBandDataDTO.getHeartRate(),
+                miBandDataDTO.getHeartRateListJson(),
                 miBandDataDTO.getSteps(),
                 miBandDataDTO.getCaloriesBurned(),
                 miBandDataDTO.getDistance(),
                 miBandDataDTO.getBatteryLevel(),
-                miBandDataDTO.getTimestamp()
+                parsedTimestamp
         );
         miBandDataRepository.save(data);
     }
@@ -36,12 +41,12 @@ public class MiBandDataServiceImpl implements MiBandDataService {
         return miBandDataRepository.findByUserId(userId).stream()
                 .map(data -> new MiBandDataDTO(
                         data.getUser().getId(),
-                        data.getHeartRate(),
+                        data.getHeartRateListJson(),
                         data.getSteps(),
                         data.getCaloriesBurned(),
                         data.getDistance(),
                         data.getBatteryLevel(),
-                        data.getTimestamp()
+                        data.getTimestamp().toString()
                 ))
                 .collect(Collectors.toList());
     }

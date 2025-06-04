@@ -17,7 +17,7 @@ public class MiBandData {
     private User user;
 
     @Column(name = "heart_rate_list", columnDefinition = "TEXT", nullable = false)
-    private String heartRateListJson;  // JSON-массив в виде строки, например: "[72,75,70,68,74,...]"
+    private String heartRateListJson;
 
     @Column(name = "steps")
     private int steps;
@@ -45,8 +45,6 @@ public class MiBandData {
         this.batteryLevel = batteryLevel;
         this.timestamp = timestamp;
     }
-
-    // --- Геттеры и сеттеры ---
 
     public Long getId() {
         return id;

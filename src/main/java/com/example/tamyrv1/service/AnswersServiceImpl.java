@@ -21,17 +21,14 @@ public class AnswersServiceImpl implements AnswersService {
 
     @Override
     public AnswersDTO submitAnswer(AnswersDTO answersDTO) {
-        // Создаём объект Answers без установки answerId
         Answers answer = new Answers();
         answer.setSurveyId(answersDTO.getSurveyId());
         answer.setUserId(answersDTO.getUserId());
         answer.setDate(Timestamp.valueOf(LocalDateTime.now()));
         answer.setAnswer(answersDTO.getAnswer());
 
-        // Сохраняем и получаем сгенерированный answerId
         Answers savedAnswer = answersRepository.save(answer);
 
-        // Возвращаем DTO
         return new AnswersDTO(
                 savedAnswer.getAnswerId(),
                 savedAnswer.getSurveyId(),

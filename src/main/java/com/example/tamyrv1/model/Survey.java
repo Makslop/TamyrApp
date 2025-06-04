@@ -16,13 +16,13 @@ public class Survey {
     private String surveyDescription;
 
     @Column(name = "questions_answers_variants", columnDefinition = "TEXT", nullable = false)
-    private String questionsAnswersVariants; // JSON format
+    private String questionsAnswersVariants;
 
     @Column(name = "is_daily", nullable = false)
     private boolean isDaily = false;
 
     @Column(name = "survey_type", nullable = false)
-    private String surveyType; // "young" or "elderly"
+    private String surveyType;
 
     public Survey() {}
 

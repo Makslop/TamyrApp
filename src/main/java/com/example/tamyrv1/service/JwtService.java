@@ -105,7 +105,6 @@ public class JwtService {
     }
 
     private Key getSigningKey() {
-        // Возвращаем секретный ключ для подписи токена
         byte[] keyBytes = "4eeab38d706831be4b36612ead768ef8182d1dd6f0e14e5dc934652e297fb16a".getBytes();
         return Keys.hmacShaKeyFor(keyBytes);
     }
